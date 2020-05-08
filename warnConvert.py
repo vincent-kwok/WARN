@@ -37,17 +37,14 @@ for pdfFile in os.listdir():
         print('Deleted ' + pdfFile)
         os.remove(pdfFile)
 
-#for i in raw:
-#	if i[1][0] != i[1][0]:
-#		for j in range(0, 11):
-#			i[1][j] = i[2][j]
-#			i[2][j] = i[4][j]
-#			i[3][j] = i[6][j]
-
-for year in range(2017, 2020):
+#Combine all csvs in year into a xlsx file
+for year in range(2017, 2020+1):
     writer = pandas.ExcelWriter(str(year) + '.xlsx')
     files = glob.glob('[a-zA-Z]*' + str(year) + '.{}'.format('csv'))
+    tableList = []
     for csvs in files:
-        df = pandas.read_csv(csvs, header=None, names=[0,1,2,3,4,5,6,7])
-        df.to_excel(writer, sheet_name = os.path.splitext(csvs)[0])
+        df = pandas.read_csv(csvs, header=None, names=[0,1,2,3,4,5,6])
+        tableList.append(df)
+    frame = pandas.concat(tableList, axis=0, ignore_index=True)
+    frame.to_excel(writer, str(year), index=False)
     writer.save()
